@@ -199,8 +199,10 @@ The Library Management API allows users to manage books, categories, and lending
 **Response:**
 
 ```json
-{'due_date': 'Fri, 04 Apr 2025 00:00:00 GMT', 'message': 'Book borrowed successfully'}
-
+{
+    "due_date": "Fri, 04 Apr 2025 00:00:00 GMT",
+    "message": "Book borrowed successfully"
+}
 ```
 
 #### 7. **Return Book**
@@ -217,7 +219,9 @@ The Library Management API allows users to manage books, categories, and lending
 **Response:**
 
 ```json
-{'message': 'Lending record deleted and logged in reservation history'}
+{
+    "message": "Lending record deleted and logged in reservation history"
+}
 ```
 
 ## Debugging & Logs
@@ -226,21 +230,4 @@ If you encounter an issue, check the logs:
 
 ```sh
 flask run --debug
-
 ```
-
-If a **500 error** occurs while listing books, check:
-
--   The database connection
--   The `fetch_books()` function in `BookService`
-
-## Contributing
-
-1.  Fork the repository
-2.  Create a feature branch
-3.  Commit your changes
-4.  Create a Pull Request
-
-## License
-
-MIT License
