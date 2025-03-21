@@ -1,4 +1,4 @@
-CREATE SCHEMA public AUTHORIZATION pg_database_owner;
+-- CREATE SCHEMA public AUTHORIZATION pg_database_owner;
 
 CREATE TABLE public.account (
 	account_id serial4 NOT NULL,
