@@ -450,10 +450,23 @@ flask  run  --debug
 
 ### Simulation API functionality:
 
-On completion of  Database and Application setup run `api_test.py` file to test functionality of the API's
+Please use the docker-compose to start the application. docker-compose will start the database and followed by flask app. Please make sure run the `test/auth_api.py` first, because this will add the librarian first. For simplicity first user is made as librarian.
 
-```sh
+To verify the functionlity, please adjust the files in `test` folder. 
 
-python api_test.py
+To start the application:
+
+```
+cd avrioc_library_management
+docker-compose up
+```
+
+
+To test the functionality:
+
+```
+python test/auth_api.py
+python test/library_api.py
+python test/reservation_api.py
 
 ```
