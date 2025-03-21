@@ -29,16 +29,15 @@ The Library Management API allows users to manage books, categories, and lending
 1.  Clone the repository:
     
     ```sh
-    git clone https://github.com/your-repo/library-api.git
-    cd library-api
-    
+    git clone https://github.com/sunilnayakshine/avrioc_library_management.git 
+    cd avrioc_library_management
     ```
     
 2.  Create and activate a virtual environment:
     
     ```sh
-    python -m venv myenv
-    source myenv/bin/activate  # On Windows: myenv\Scripts\activate
+    python -m venv venv
+    source venv/bin/activate
     
     ```
     
