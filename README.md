@@ -470,3 +470,98 @@ python test/library_api.py
 python test/reservation_api.py
 
 ```
+
+### Sample run:
+
+
+**Application Setup:**
+Cloning the source and starting the database and flask app.
+```
+[sunil@myserver testing_api]$ git clone https://github.com/sunilnayakshine/avrioc_library_management.git
+Cloning into 'avrioc_library_management'...
+remote: Enumerating objects: 62, done.
+remote: Counting objects: 100% (62/62), done.
+remote: Compressing objects: 100% (48/48), done.
+remote: Total 62 (delta 15), reused 57 (delta 10), pack-reused 0 (from 0)
+Unpacking objects: 100% (62/62), done.
+[sunil@myserver testing_api]$ cd avrioc_library_management/
+[sunil@myserver avrioc_library_management]$
+[sunil@myserver avrioc_library_management]$ docker-compose up -d --build
+[+] Building 2.1s (17/17) FINISHED                                                                                                                                            docker:default
+ => [postgres internal] load .dockerignore                                                                                                                                              0.0s
+ => => transferring context: 2B                                                                                                                                                         0.0s
+ => [postgres internal] load build definition from Dockerfile.database                                                                                                                  0.0s
+ => => transferring dockerfile: 231B                                                                                                                                                    0.0s
+ => [postgres internal] load metadata for docker.io/library/postgres:latest                                                                                                             0.8s
+ => [postgres internal] load build context                                                                                                                                              0.0s
+ => => transferring context: 1.96kB                                                                                                                                                     0.0s
+ => [postgres 1/2] FROM docker.io/library/postgres:latest@sha256:7f29c02ba9eeff4de9a9f414d803faa0e6fe5e8d15ebe217e3e418c82e652b35                                                       0.0s
+ => CACHED [postgres 2/2] COPY db.sql /docker-entrypoint-initdb.d/db.sql                                                                                                                0.0s
+ => [postgres] exporting to image                                                                                                                                                       0.0s
+ => => exporting layers                                                                                                                                                                 0.0s
+ => => writing image sha256:729fc82e4fd39c09f3b701c9ee2ae06ece81247bbbf395dd1a5d1ee164de5505                                                                                            0.0s
+ => => naming to docker.io/library/avrioc_library_management-postgres                                                                                                                   0.0s
+ => [flask-app internal] load .dockerignore                                                                                                                                             0.0s
+ => => transferring context: 2B                                                                                                                                                         0.0s
+ => [flask-app internal] load build definition from Dockerfile.flask                                                                                                                    0.0s
+ => => transferring dockerfile: 292B                                                                                                                                                    0.0s
+ => [flask-app internal] load metadata for docker.io/library/python:3.9                                                                                                                 0.9s
+ => [flask-app 1/5] FROM docker.io/library/python:3.9@sha256:bc2e05bca883473050fc3b7c134c28ab822be73126ba1ce29517d9e8b7f3703b                                                           0.0s
+ => [flask-app internal] load build context                                                                                                                                             0.0s
+ => => transferring context: 94.51kB                                                                                                                                                    0.0s
+ => CACHED [flask-app 2/5] WORKDIR /app                                                                                                                                                 0.0s
+ => CACHED [flask-app 3/5] COPY requirements.txt .                                                                                                                                      0.0s
+ => CACHED [flask-app 4/5] RUN pip install --no-cache-dir -r requirements.txt                                                                                                           0.0s
+ => [flask-app 5/5] COPY . .                                                                                                                                                            0.1s
+ => [flask-app] exporting to image                                                                                                                                                      0.0s
+ => => exporting layers                                                                                                                                                                 0.0s
+ => => writing image sha256:528ee05844c4593100bea56b261107d368585d9c1155d1683a3ebd2ac853ba63                                                                                            0.0s
+ => => naming to docker.io/library/avrioc_library_management-flask-app                                                                                                                  0.0s
+[+] Running 2/3
+ ⠙ Network avrioc_library_management_default  Created                                                                                                                                  11.1s
+ ✔ Container postgres-db                      Healthy                                                                                                                                  10.8s
+ ✔ Container flask-app                        Started                                                                                                                                  11.0s
+[sunil@myserver avrioc_library_management]$
+
+```
+
+**To setup librarian and test functionality of API's:**
+
+```
+[sunil@myserver avrioc_library_management]$ docker exec -it postgres-db  psql -h 127.0.0.1 -p 5432 -U sunil -d library -c "select * from librarian;"
+ librarian_id | account_id
+--------------+------------
+            1 |          1
+(1 row)
+
+[sunil@myserver avrioc_library_management]$ docker exec -it postgres-db  psql -h 127.0.0.1 -p 5432 -U sunil -d library -c "select * from category;"
+ id |    name
+----+-------------
+  1 | Fiction
+  2 | Non-Fiction
+  3 | Science
+  4 | History
+  5 | Biography
+(5 rows)
+
+[sunil@myserver avrioc_library_management]$ docker exec -it flask-app bash -c "python test_api/auth_api.py"
+
+========== Register user ====================================
+{'Info': 'username created succefully'}
+{'Info': 'username created succefully'}
+[sunil@myserver avrioc_library_management]$ docker exec -it flask-app bash -c "python test_api/library_api.py"
+
+============== Library management by Librarian ===============
+{'message': 'Book added successfully'}
+[{'category_id': 3, 'isbn': '978-3-16-2025', 'language': 'New language', 'no_of_copies': 123, 'publisher': 'new Press', 'title': 'Added new book'}]
+
+============== Library management by User  ====================
+{'error': 'Unauthorized access'}
+{'error': 'Unauthorized access'}
+{'error': 'Unauthorized access'}
+[sunil@myserver avrioc_library_management]$ docker exec -it flask-app bash -c "python test_api/reservation_api.py"
+{'due_date': 'Sat, 05 Apr 2025 00:00:00 GMT', 'message': 'Book borrowed successfully'}
+{'message': 'Lending record deleted and logged in reservation history'}
+[sunil@myserver avrioc_library_management]$
+
+```
