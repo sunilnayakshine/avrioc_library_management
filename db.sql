@@ -66,3 +66,12 @@ CREATE TABLE public.reservation_history (
 	isbn varchar(20) NOT NULL,
 	CONSTRAINT reservation_history_pkey PRIMARY KEY (history_id)
 );
+-- To set librarian when application started. 
+INSERT INTO librarian VALUES (1,1);
+
+INSERT INTO public.category (name) VALUES
+('Fiction'),
+('Non-Fiction'),
+('Science'),
+('History'),
+('Biography');
